@@ -1,0 +1,36 @@
+
+# Django Core
+Django==4.2.16
+djangorestframework==3.15.2
+django-cors-headers==4.4.0
+
+# Database / Config
+psycopg2-binary==2.9.9
+python-decouple==3.8
+dj-database-url==2.1.0
+
+# Image Processing
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+Pillow==10.4.0
+
+
+# Face / CV (as required)
+protobuf==3.20.3
+mediapipe==0.10.14
+insightface==0.7.3
+onnxruntime==1.17.3
+
+# ML
+scikit-learn==1.5.1
+scipy==1.13.1
+
+# Utilities
+requests==2.31.0
+
+# Async (keep only if used)
+celery==5.3.4
+redis==5.0.1
+
+# Server
+gunicorn==22.0.0

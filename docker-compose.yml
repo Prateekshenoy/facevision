@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: facevision_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: facevision
+      POSTGRES_USER: facevision
+      POSTGRES_PASSWORD: facevision_secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U facevision"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: facevision_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://facevision:facevision_secret@db:5432/facevision
+      DJANGO_SECRET_KEY: "change-me-in-production-use-long-random-string"
+      DJANGO_DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,backend"
+      MEDIA_ROOT: /app/media
+    volumes:
+      - ./backend:/app
+      - media_files:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_OPTIONS: "--max_old_space_size=2048"
+        CI: "false"
+        GENERATE_SOURCEMAP: "false"
+    container_name: facevision_frontend
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: facevision_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - media_files:/app/media:ro
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  postgres_data:
+  media_files:
