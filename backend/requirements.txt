@@ -1,29 +1,27 @@
-
 # Django Core
 Django==4.2.16
 djangorestframework==3.15.2
 django-cors-headers==4.4.0
 
 # Database / Config
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 python-decouple==3.8
 dj-database-url==2.1.0
 
 # Image Processing
-numpy==1.26.4
+numpy==2.2.6
 opencv-python-headless==4.10.0.84
-Pillow==10.4.0
-
+Pillow==11.2.1
 
 # Face / CV (as required)
-protobuf==3.20.3
-mediapipe==0.10.14
-insightface==0.7.3
-onnxruntime==1.17.3
+protobuf==5.29.4
+mediapipe==0.10.35
+insightface @ git+https://github.com/deepinsight/insightface.git#subdirectory=python-package
+onnxruntime==1.21.0
 
 # ML
-scikit-learn==1.5.1
-scipy==1.13.1
+scikit-learn==1.6.1
+scipy==1.15.3
 
 # Utilities
 requests==2.31.0

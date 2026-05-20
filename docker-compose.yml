@@ -72,6 +72,17 @@ services:
       - backend
       - frontend
 
+  faceswap:
+    build:
+      context: ./faceswap
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./faceswap/models:/app/models
+      - ./faceswap/templates:/app/templates
+    working_dir: /app
+    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
 volumes:
   postgres_data:
   media_files:
